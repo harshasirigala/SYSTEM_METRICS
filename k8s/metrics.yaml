@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: metrics
+  labels:
+    app: metrics
+spec:
+  selector:
+    matchLabels:
+      app: metrics
+  template:
+    metadata:
+      labels:
+        app: metrics
+    spec:
+      containers:
+        - name: metrics
+          image: metrics:2
+          imagePullPolicy: Never   # use the image already in k3s, don't try a registry
+          ports:
+            - name: http
+              containerPort: 8000
+          env:
+            - name: HOST_ROOT
+              value: /host
+          volumeMounts:
+            - name: host-root
+              mountPath: /host
+              readOnly: true
+      volumes:
+        - name: host-root
+          hostPath:
+            path: /
+            type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: metrics
+  labels:
+    app: metrics
+spec:
+  selector:
+    app: metrics
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http

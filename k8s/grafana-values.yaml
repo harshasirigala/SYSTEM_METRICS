@@ -1,0 +1,18 @@
+admin:
+  existingSecret: grafana-adm
+  userKey: admin-user
+  passwordKey: admin-password
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://prometheus-server.default.svc.cluster.local:80
+        access: proxy
+        isDefault: true
+      - name: Loki
+        type: loki
+        url: http://loki.default.svc.cluster.local:3100
+        access: proxy
